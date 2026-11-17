@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salary Calculator</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EAF3FF; --card:#FFFFFF; --text:#0B1B33; --muted:#6B7A90; --blue:#007AFF; --blue-soft:#E3F0FF; --line:#E6ECF4; --hero1:#2F8CFF; --hero2:#0A64E0;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#06101F;--card:#0F1E36;--text:#EAF2FF;--muted:#8FA3BF;--blue:#3D9BFF;--blue-soft:#14305A;--line:#1B2D4B;--hero1:#1D6FE0;--hero2:#0B3F94;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#06101F;--card:#0F1E36;--text:#EAF2FF;--muted:#8FA3BF;--blue:#3D9BFF;--blue-soft:#14305A;--line:#1B2D4B;--hero1:#1D6FE0;--hero2:#0B3F94;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:34px;font-weight:700;letter-spacing:-.03em;margin:8px 4px 2px}
+.sub{color:var(--muted);font-size:15px;margin:0 4px 20px}
+.input-card{background:var(--card);border-radius:20px;padding:16px 18px;box-shadow:0 1px 2px rgba(10,60,140,.06),0 8px 24px rgba(10,60,140,.06)}
+.input-card label{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field{display:flex;align-items:center;gap:8px;margin-top:6px}
+.field span{font-size:34px;font-weight:600;color:var(--blue)}
+.field input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:34px;font-weight:600;color:var(--text);letter-spacing:-.02em;padding:0}
+.field input::placeholder{color:var(--muted);opacity:.5}
+.hero{margin:16px 0;border-radius:24px;padding:22px 20px;color:#fff;background:linear-gradient(145deg,var(--hero1),var(--hero2));box-shadow:0 12px 28px rgba(0,100,224,.28)}
+.hero small{display:block;font-size:13px;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:.05em}
+.hero strong{display:block;font-size:40px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.hero .row{display:flex;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25);font-size:15px}
+.hero .row b{font-weight:600}
+h2{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:22px 8px 8px}
+.group{background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(10,60,140,.05)}
+.item{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;font-size:17px}
+.item+.item{border-top:1px solid var(--line)}
+.item .v{font-weight:600;font-variant-numeric:tabular-nums}
+.item.total{background:var(--blue-soft)}
+.item.total .l,.item.total .v{color:var(--blue);font-weight:700}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Salary</h1>
+  <p class="sub">Monthly breakdown at a glance</p>
+
+  <div class="input-card">
+    <label for="basic">Basic Salary</label>
+    <div class="field"><span>₹</span><input id="basic" type="text" inputmode="decimal" placeholder="0" autocomplete="off"></div>
+  </div>
+
+  <div class="hero">
+    <small>Net Gross</small>
+    <strong id="h-netgross">₹0</strong>
+    <div class="row"><span>Total Gross</span><b id="h-total">₹0</b></div>
+  </div>
+
+  <h2>Earnings</h2>
+  <div class="group">
+    <div class="item"><span>Basic Salary</span><span class="v" id="basicV">₹0</span></div>
+    <div class="item"><span>NPA</span><span class="v" id="npa">₹0</span></div>
+    <div class="item"><span>HRA</span><span class="v" id="hra">₹0</span></div>
+    <div class="item"><span>Transport Allowance</span><span class="v" id="ta">₹0</span></div>
+  </div>
+
+  <h2>Net Salary</h2>
+  <div class="group">
+    <div class="item"><span>Net Salary</span><span class="v" id="net">₹0</span></div>
+    <div class="item"><span>Net Salary with TA</span><span class="v" id="netta">₹0</span></div>
+  </div>
+
+  <h2>NPS Contributions</h2>
+  <div class="group">
+    <div class="item"><span>Self</span><span class="v" id="nself">₹0</span></div>
+    <div class="item"><span>Employer</span><span class="v" id="nemp">₹0</span></div>
+  </div>
+
+  <h2>Totals</h2>
+  <div class="group">
+    <div class="item total"><span class="l">Total Gross</span><span class="v" id="total">₹0</span></div>
+    <div class="item total"><span class="l">Net Gross</span><span class="v" id="netgross">₹0</span></div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var fmt=new Intl.NumberFormat('en-IN',{maximumFractionDigits:2,minimumFractionDigits:0});
+  var $=function(id){return document.getElementById(id)};
+  var money=function(n){return '₹'+fmt.format(Math.round(n*100)/100)};
+  var inp=$('basic');
+  function calc(){
+    var raw=inp.value.replace(/[^0-9.]/g,'');
+    var parts=raw.split('.');
+    if(parts.length>2)raw=parts[0]+'.'+parts.slice(1).join('');
+    var x=parseFloat(raw)||0;
+    var ip=raw.split('.')[0], dp=raw.indexOf('.')>-1?'.'+raw.split('.')[1]:'';
+    inp.value=(ip?new Intl.NumberFormat('en-IN').format(+ip):'')+dp;
+    var npa=.2*x, hra=.3*x, ta=x>0?7200+.63*7200:0;
+    var net=x+npa, netta=net+ta;
+    var ns=.1*net, ne=.14*net;
+    var total=x+npa+hra+ta+ns+ne, netgross=x+npa+hra+ta;
+    var set=function(id,v){$(id).textContent=money(v)};
+    set('basicV',x);set('npa',npa);set('hra',hra);set('ta',ta);
+    set('net',net);set('netta',netta);set('nself',ns);set('nemp',ne);
+    set('total',total);set('netgross',netgross);set('h-total',total);set('h-netgross',netgross);
+  }
+  inp.addEventListener('input',calc);
+  calc();
+})();
+</script>
+</body>
+</html>
